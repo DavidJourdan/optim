@@ -6,7 +6,7 @@ Nonlinear optimization library built using Eigen
 
 The Newton Solver is meant to work with medium-sized problems and sparse hessian matrices. To use this algorithm, you need to give both first-order (gradient) and second-order information (hessian). Here is an example with the Rosenbrock function
 
-```
+```cpp
 using namespace Eigen;
 struct Rosenbrock {
     int n;
@@ -46,7 +46,7 @@ struct Rosenbrock {
 ```
 
 Then you can either solve the problem automatically:
-```
+```cpp
 using namespace optim;
 NewtonSolver<double> solver;
 solver.options.display = NewtonSolver<double>::quiet;
@@ -58,7 +58,7 @@ solver.solve(r, x);
 ```
 
 Or, if you want more control at each iteration, you can solve one step at a time:
-```
+```cpp
 using namespace optim;
 NewtonSolver<double> solver;
 solver.options.display = NewtonSolver<double>::verbose;
@@ -72,7 +72,7 @@ while(solver.gradient_norm() > 1e-4 && solver.info() == NewtonSolver<double>::su
 }
 ```
 Note that you can also initialize the solver with the energy, gradient and hessian function themselves instead of having a specific class:
-```
+```cpp
 VectorXd var = VectorXd::Constant(10, 3);
 solve([&r](Eigen::Ref<const Vec<scalar>> x) { return r.energy(x); },
       [&r](Eigen::Ref<const Vec<scalar>> x) { return r.gradient(x); },
@@ -83,8 +83,8 @@ The implementation of this algorithm follow its description given in "Nonlinear 
 
 ## How to build
 
-If your project uses CMake, add 
-```
+If your project uses CMake, simply add 
+```cpp
 add_subdirectory("path/to/optim")
 
 ...
