@@ -15,7 +15,7 @@ option(BUILD_TESTS    "Build optim unit test"  ${TOPLEVEL_PROJECT})
 # Build example project
 option(BUILD_EXAMPLE  "Build example project"  ${TOPLEVEL_PROJECT})
 
-option(OPTIM_USE_CHOLMOD  "Use Cholmod linear solver instead of Eigen's built-in one"  ON)
+option(OPTIM_USE_CHOLMOD  "Use Cholmod linear solver instead of Eigen's built-in one"  OFF)
 
 ### conditionally compile certain modules depending on libraries found on the system
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)

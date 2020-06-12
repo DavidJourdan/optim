@@ -90,7 +90,7 @@ template <typename scalar>
 void NewtonSolver<scalar>::display_line(scalar step_size)
 {
   int spacing = 10 + options.display_precision;
-  printf("%4i%*.*e%*.*e%*.*e\n", _iter, spacing, options.display_precision, _energy_val, spacing,
+  printf("%4i%*.*e%*.*e%*.*e\n", _iter++, spacing, options.display_precision, _energy_val, spacing,
          options.display_precision, step_size, spacing, options.display_precision, gradient_norm());
 }
 

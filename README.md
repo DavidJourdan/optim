@@ -74,7 +74,7 @@ while(solver.gradient_norm() > 1e-4 && solver.info() == NewtonSolver<double>::su
 Note that you can also initialize the solver with the energy, gradient and hessian function themselves instead of having a specific class:
 ```cpp
 VectorXd var = VectorXd::Constant(10, 3);
-solve([&r](Eigen::Ref<const Vec<scalar>> x) { return r.energy(x); },
+solver.solve([&r](Eigen::Ref<const Vec<scalar>> x) { return r.energy(x); },
       [&r](Eigen::Ref<const Vec<scalar>> x) { return r.gradient(x); },
       [&r](Eigen::Ref<const Vec<scalar>> x) { return r.hessian(x); }, var);
 ```
@@ -84,11 +84,9 @@ The implementation of this algorithm follow its description given in "Nonlinear 
 ## How to build
 
 If your project uses CMake, simply add 
-```cpp
+```c
 add_subdirectory("path/to/optim")
-
-...
-
+// ...
 target_link_libraries(YOUR_TARGET optim)
 ```
-to your ```CMakeLists.txt```
+to your ```CMakeLists.txt```. You can optionally add CHOLMOD as a dependency for faster matrix solves, to do so set the ```OPTIM_USE_CHOLMOD``` to ```ON``` in your CMakeLists.txt
