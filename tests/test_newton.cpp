@@ -47,30 +47,32 @@ TEST_CASE("Rosenbrock function", "[Newton]")
 
   SECTION("Solve")
   {
-    NewtonSolver<double> solver;
+    NewtonSolver<> solver;
 
-    solver.options.display = NewtonSolver<double>::quiet;
+    REQUIRE(solver.info() == NewtonSolver<>::uninitialized);
+
+    solver.options.display = NewtonSolver<>::quiet;
     solver.options.threshold = 1e-4;
-    VectorXd x = VectorXd::Constant(10, 3);
+    VectorXd x = VectorXd::Constant(100, 3);
     solver.solve(energy, gradient, hessian, x);
 
-    CHECK_THAT(solver.var(), ApproxEquals(VectorXd::Ones(10)));
+    REQUIRE_THAT(solver.var(), ApproxEquals(VectorXd::Ones(100)));
   }
 
   SECTION("Solve 1 step")
   {
-    NewtonSolver<double> solver;
+    NewtonSolver<> solver;
 
-    solver.options.display = NewtonSolver<double>::quiet;
-    VectorXd x = VectorXd::Constant(10, 3);
+    solver.options.display = NewtonSolver<>::quiet;
+    VectorXd x = VectorXd::Constant(100, 3);
     solver.init(energy, gradient, hessian, x);
 
-    while(solver.gradient_norm() > 1e-4 && solver.info() == NewtonSolver<double>::success)
+    while(solver.gradient_norm() > 1e-4 && solver.info() == NewtonSolver<>::success)
     {
       solver.solve_one_step();
     }
 
-    CHECK_THAT(solver.var(), ApproxEquals(VectorXd::Ones(10)));
+    REQUIRE_THAT(solver.var(), ApproxEquals(VectorXd::Ones(100)));
   }
 
   SECTION("Object-oriented")
@@ -116,11 +118,11 @@ TEST_CASE("Rosenbrock function", "[Newton]")
 
     solver.options.display = NewtonSolver<double>::quiet;
     solver.options.threshold = 1e-4;
-    VectorXd x = VectorXd::Constant(10, 3);
+    VectorXd x = VectorXd::Constant(100, 3);
 
-    Rosenbrock r(10);
+    Rosenbrock r(100);
     solver.solve(r, x);
 
-    CHECK_THAT(solver.var(), ApproxEquals(VectorXd::Ones(10)));
+    REQUIRE_THAT(solver.var(), ApproxEquals(VectorXd::Ones(100)));
   }
 }

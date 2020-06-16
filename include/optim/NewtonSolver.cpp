@@ -14,13 +14,15 @@
 using namespace optim;
 
 template <typename scalar>
-NewtonSolver<scalar>::NewtonSolver() : _regularization_coeff{0.01}, _status{success}
-{}
-
-template <typename scalar>
 Vec<scalar> NewtonSolver<scalar>::solve_one_step()
 {
   using namespace Eigen;
+
+  if(info() == uninitialized)
+  {
+    std::cerr << "Error: uninitialized solver\nCall init() before solve_one_step()\n";
+    return Vec<scalar>{};
+  }
 
   if(_regularization_coeff > options.regularization.min) // start from a smaller value than in the previous iteration
     _regularization_coeff *= options.regularization.shrink_factor;
@@ -49,6 +51,7 @@ Vec<scalar> NewtonSolver<scalar>::solve_one_step()
 
       if(options.display != quiet)
         display_line(alpha);
+      ++_iter;
     }
     else
       _status = line_search_failed;
@@ -90,7 +93,7 @@ template <typename scalar>
 void NewtonSolver<scalar>::display_line(scalar step_size)
 {
   int spacing = 10 + options.display_precision;
-  printf("%4i%*.*e%*.*e%*.*e\n", _iter++, spacing, options.display_precision, _energy_val, spacing,
+  printf("%4i%*.*e%*.*e%*.*e\n", _iter, spacing, options.display_precision, _energy_val, spacing,
          options.display_precision, step_size, spacing, options.display_precision, gradient_norm());
 }
 

@@ -20,13 +20,10 @@ template <typename scalar>
 #ifdef OPTIM_USE_CHOLMOD
 using LinearSolver = Eigen::CholmodDecomposition<Eigen::SparseMatrix<scalar>, Eigen::Upper>;
 #else
-using LinearSolver = Eigen::SimplicialLLT<Eigen::SparseMatrix<scalar>, Eigen::Upper> LinearSolver;
+using LinearSolver = Eigen::SimplicialLLT<Eigen::SparseMatrix<scalar>, Eigen::Upper>;
 #endif
 
-template <typename scalar>
-using Vec = Eigen::Matrix<scalar, -1, 1>;
-
-template <typename scalar>
+template <typename scalar = double>
 class NewtonSolver
 {
 public:
@@ -35,7 +32,7 @@ public:
    * you can either initialize it by calling init and then call solve_one_step() as many time as you want,
    * or call directly solve
    */
-  NewtonSolver();
+  NewtonSolver() : _status{uninitialized} {};
 
   /**
    * @brief Set the energy, gradient and hessian functions
@@ -56,6 +53,7 @@ public:
     _hessian_fct = hessian_func;
 
     _iter = 1;
+    _regularization_coeff = 0.01;
 
     if(options.display != quiet)
       display_header();
@@ -122,7 +120,7 @@ public:
     if(info() != success)
       display_status();
 
-    return var();
+    return _var;
   }
 
   /**
@@ -162,7 +160,8 @@ public:
     wrong_descent_direction,
     regularization_failed,
     iteration_overflow,
-    NaN_error
+    NaN_error,
+    uninitialized
   };
   StatusType info() const { return _status; };
 
