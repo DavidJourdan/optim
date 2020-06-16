@@ -7,18 +7,17 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#ifdef NEWTON_USE_CHOLMOD
+#ifdef OPTIM_USE_CHOLMOD
 #include <Eigen/CholmodSupport>
 #endif
 
 #include <functional>
-#include <optional>
 
 namespace optim
 {
 
 template <typename scalar>
-#ifdef NEWTON_USE_CHOLMOD
+#ifdef OPTIM_USE_CHOLMOD
 using LinearSolver = Eigen::CholmodDecomposition<Eigen::SparseMatrix<scalar>, Eigen::Upper>;
 #else
 using LinearSolver = Eigen::SimplicialLLT<Eigen::SparseMatrix<scalar>, Eigen::Upper> LinearSolver;
@@ -71,6 +70,8 @@ public:
 
     if(std::isnan(_energy_val) || std::isnan(_force_val.sum()) || std::isnan(_hessian_val.sum()))
       _status = NaN_error;
+    else
+      _status = success;
 
     _solver.analyzePattern(_hessian_val);
 
@@ -82,7 +83,7 @@ public:
    * @brief Set the energy, gradient and hessian functions using a class implementing these functions
    *
    * @tparam Obj any type with the methods energy, gradient and hessian
-   * @param obj  an object implementing the objective function and its first and secodn derivatives
+   * @param obj  an object implementing the objective function and its first and second derivatives
    * @param var  initial guess for the algorithm (Eigen::VectorXd of size n)
    */
   template <class Obj>
@@ -107,9 +108,9 @@ public:
   Vec<scalar> solve(const ScalarFunc &objective_func,
                     const VectorFunc &gradient_func,
                     const MatrixFunc &hessian_func,
-                    Eigen::Ref<const Vec<scalar>> _var)
+                    Eigen::Ref<const Vec<scalar>> var)
   {
-    init(objective_func, gradient_func, hessian_func, _var);
+    init(objective_func, gradient_func, hessian_func, var);
 
     while(gradient_norm() > options.threshold && info() == success)
     {
@@ -129,7 +130,7 @@ public:
    * needed functions
    *
    * @tparam Obj any type with the methods energy, gradient and hessian
-   * @param obj  an object implementing the objective function and its first and secodn derivatives
+   * @param obj  an object implementing the objective function and its first and second derivatives
    * @param var  initial guess for the algorithm (Eigen::VectorXd of size n)
    * @return the result of the algorithm (ie x = \argmin f such that \nabla f(x) = 0 and \nabla^2 f(x) is SPD)
    */
@@ -144,8 +145,8 @@ public:
   /**
    * @brief  do one step of the algorithm
    *
-   * @return the result of doing on step of the algorithm (ie x_1 = x_0 - \alpha * dx where dx is the computed descent
-   * direction)
+   * @return the result of doing one step of the algorithm (ie x_{k+1} = x_k - \alpha * dx where dx is the computed
+   * descent direction)
    */
   Vec<scalar> solve_one_step();
 

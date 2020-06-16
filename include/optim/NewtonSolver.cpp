@@ -248,7 +248,7 @@ namespace optim
 {
 template class NewtonSolver<double>;
 
-#ifndef NEWTON_USE_CHOLMOD
+#ifndef OPTIM_USE_CHOLMOD
 template class NewtonSolver<float>;
 #endif
 } // namespace optim

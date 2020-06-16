@@ -84,7 +84,7 @@ The implementation of this algorithm follow its description given in "Nonlinear 
 ## How to build
 
 If your project uses CMake, simply add 
-```c
+```
 add_subdirectory("path/to/optim")
 // ...
 target_link_libraries(YOUR_TARGET optim)
