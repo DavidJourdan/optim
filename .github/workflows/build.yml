@@ -1,0 +1,54 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  CTEST_OUTPUT_ON_FAILURE: ON
+#   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+jobs:
+  ####################
+  # Linux / macOS
+  ####################
+
+  build:
+    name: ${{ matrix.name }} Release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: macos-latest
+            name: macOS
+          - os: ubuntu-latest
+            name: Linux
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt install libeigen3-dev
+      - name: Dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install eigen
+
+      - name: Configure
+        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release -j4
+
+      - name: Tests
+        run:  |
+          cd build
+          ctest -C Release
+
+    # - name: collect code coverage
+    #   run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
