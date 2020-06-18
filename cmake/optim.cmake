@@ -8,6 +8,7 @@ option(OPTIM_USE_CHOLMOD  "Use Cholmod linear solver instead of Eigen's built-in
 ### Configuration
 set(OPTIM_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 set(OPTIM_SOURCE_DIR "${OPTIM_ROOT}/include")
+set(OPTIM_INCL_DIR "${OPTIM_ROOT}/include/optim")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -18,7 +19,7 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 set (EXTRA_LIBS ${EXTRA_LIBS} Eigen3::Eigen)
 
 ### optim
-file(GLOB SRC ${OPTIM_SOURCE_DIR}/optim/NewtonSolver.cpp ${OPTIM_SOURCE_DIR}/optim/filter_var.cpp)
+file(GLOB SRC ${OPTIM_INCL_DIR}/NewtonSolver.cpp ${OPTIM_INCL_DIR}/filter_var.cpp ${OPTIM_INCL_DIR}/SolverBase.cpp)
 add_library(optim ${SRC})
 
 # c++ flags

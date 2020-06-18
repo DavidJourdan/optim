@@ -42,11 +42,11 @@ int main()
 
   NewtonSolver<double> solver;
 
-  solver.options.display = NewtonSolver<double>::verbose;
+  solver.options.display = SolverDisplay::verbose;
   solver.options.threshold = 1e-4;
-  VectorXd x = VectorXd::Constant(10, 3);
+  VectorXd x = VectorXd::Constant(100, 3);
 
-  std::cout << solver.solve(energy, gradient, hessian, x) << "\n";
+  std::cout << solver.solve(energy, gradient, hessian, x).transpose() << "\n";
 
   return 0;
 }

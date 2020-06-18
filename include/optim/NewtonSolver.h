@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include <Eigen/Dense>
+#include "SolverBase.h"
+
 #include <Eigen/Sparse>
 #ifdef OPTIM_USE_CHOLMOD
 #include <Eigen/CholmodSupport>
@@ -24,7 +25,7 @@ using LinearSolver = Eigen::SimplicialLLT<Eigen::SparseMatrix<scalar>, Eigen::Up
 #endif
 
 template <typename scalar = double>
-class NewtonSolver
+class NewtonSolver : public SolverBase<scalar>
 {
 public:
   /**
@@ -32,7 +33,7 @@ public:
    * you can either initialize it by calling init and then call solve_one_step() as many time as you want,
    * or call directly solve
    */
-  NewtonSolver() : _status{uninitialized} {};
+  NewtonSolver() : SolverBase<scalar>::SolverBase{} {};
 
   /**
    * @brief Set the energy, gradient and hessian functions
@@ -51,30 +52,19 @@ public:
     _energy_fct = objective_func;
     _gradient_fct = gradient_func;
     _hessian_fct = hessian_func;
+    _var = var;
+    _force_val = -gradient(var);
+    _hessian_val = hessian(var);
+
+    if(std::isnan(_force_val.sum()) || std::isnan(_hessian_val.sum()))
+      this->set_status(SolverStatus::NaN_error);
+
+    this->init_base(energy(var));
 
     _iter = 1;
     _regularization_coeff = 0.01;
 
-    if(options.display != quiet)
-      display_header();
-
-    std::sort(options.fixed_dofs.begin(), options.fixed_dofs.end());
-
-    _var = var;
-    _energy_val = energy(var);
-    options.update_fct(_var);
-    _force_val = -gradient(var);
-    _hessian_val = hessian(var);
-
-    if(std::isnan(_energy_val) || std::isnan(_force_val.sum()) || std::isnan(_hessian_val.sum()))
-      _status = NaN_error;
-    else
-      _status = success;
-
     _solver.analyzePattern(_hessian_val);
-
-    if(options.threshold < 0)
-      options.threshold = 1e-4 * gradient_norm();
   }
 
   /**
@@ -110,15 +100,7 @@ public:
   {
     init(objective_func, gradient_func, hessian_func, var);
 
-    while(gradient_norm() > options.threshold && info() == success)
-    {
-      solve_one_step();
-      if(_iter > options.iteration_limit)
-        _status = iteration_overflow;
-    }
-
-    if(info() != success)
-      display_status();
+    this->main_loop();
 
     return _var;
   }
@@ -146,64 +128,15 @@ public:
    * @return the result of doing one step of the algorithm (ie x_{k+1} = x_k - \alpha * dx where dx is the computed
    * descent direction)
    */
-  Vec<scalar> solve_one_step();
+  Vec<scalar> solve_one_step() override;
+
+  const char *method_name() const override { return "NEWTON METHOD"; }
 
   // getters
-  int iteration_count() const { return _iter; }
-  scalar gradient_norm() const { return _force_val.norm(); }
-  Vec<scalar> var() const { return _var; }
-
-  enum DisplayMode { quiet, normal, verbose };
-  enum StatusType {
-    success,
-    line_search_failed,
-    wrong_descent_direction,
-    regularization_failed,
-    iteration_overflow,
-    NaN_error,
-    uninitialized
-  };
-  StatusType info() const { return _status; };
-
-  struct NewtonOptions
-  {
-    std::vector<int> fixed_dofs = {};
-    std::function<void(Eigen::Ref<const Vec<scalar>>)> update_fct = [](const auto &) {};
-
-    struct RegularizationOptions
-    {
-      // constants defined in Nocedal & Wright p.51
-      scalar beta = 1e-3;
-      scalar tolerance = 1e-4; // defined as $\tau$
-
-      scalar max = 1e4;  // maximum regularization coefficient to be added before throwing an error
-      scalar min = 1e-6; // minimum coefficient
-      // between 0 and 0.5, says how much the regularization coefficient decreases in each iteration
-      scalar shrink_factor = 0.25;
-    } regularization;
-
-    struct LineSearchOptions
-    {
-      // coefficient for the Armijo rule (to be set between 0 and 1)
-      scalar armijo_c = 1e-4;
-      // between 0 and 1, says how much the step size decreases in each step
-      scalar shrink_factor = 0.5;
-    } line_search;
-
-    // only useful if not using solve_one_step
-    scalar threshold = -1;
-
-    // set to true to compute gradient and hessian in parallel
-    bool compute_parallel = false;
-
-    // number of digits to be displayed in display_line
-    int display_precision = 3;
-
-    // max number of iterations
-    int iteration_limit = 5000;
-
-    DisplayMode display = verbose;
-  } options;
+  int iteration_count() const override { return _iter; }
+  scalar gradient_norm() const override { return _force_val.norm(); }
+  Vec<scalar> var() const override { return _var; }
+  Vec<scalar> gradient_value() const override { return -_force_val; }
 
 protected:
   /**
@@ -223,13 +156,6 @@ protected:
   void update(scalar alpha, Eigen::Ref<const Vec<scalar>> dx);
 
   /**
-   * Backtracking line search algorithm (see Numerical Optimization by Nocedal & Wright)
-   * @param direction the direction of descent
-   * @return the step size alpha if it succeeds, or -1 if the line search failed
-   */
-  scalar line_search(Eigen::Ref<const Vec<scalar>> direction);
-
-  /**
    * solve Ax = b while checking the positive-definiteness of A and adding a multiple of identity if necessary
    * @param A  sparse matrix (hessian or equivalent)
    * @param b  vector (opposite of the gradient)
@@ -237,28 +163,15 @@ protected:
    */
   Vec<scalar> linear_solve(Eigen::SparseMatrix<scalar> &A, Eigen::Ref<const Vec<scalar>> b);
 
-  /**
-   * These functions display relevant per-iteration information, in a similar fashion to Matlab solvers
-   * Iter: iteration count
-   * Fval: current energy value
-   * Step size: step size used to decrease along the descent direction
-   * Optimality: norm of the gradient
-   */
-  void display_header() const;
-  void display_line(scalar step_size);
-  void display_status() const;
-
-  scalar energy(Eigen::Ref<const Vec<scalar>> x);
+  scalar energy(Eigen::Ref<const Vec<scalar>> x) override;
   Vec<scalar> gradient(Eigen::Ref<const Vec<scalar>> x);
   Eigen::SparseMatrix<scalar> hessian(Eigen::Ref<const Vec<scalar>> x);
 
 private:
   Vec<scalar> _var;
   int _iter;
-  scalar _energy_val;
   Vec<scalar> _force_val;
   Eigen::SparseMatrix<scalar> _hessian_val;
-  StatusType _status;
   scalar _regularization_coeff;
 
   LinearSolver<scalar> _solver;
