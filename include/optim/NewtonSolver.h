@@ -40,7 +40,7 @@ public:
    *
    * @param objective_func  function to minimize (takes as input an Eigen::VectorXd of size n)
    * @param gradient_func  gradient of the objective function (returns an Eigen::VectorXd of size n)
-   * @param hessian_func  hessian of the objective function (returns a square Eigen::SparseMatrix<double> of size n)
+   * @param hessian_func  hessian of the objective function (returns a square Eigen::SparseMatrix<scalar> of size n)
    * @param var  initial guess for the algorithm (Eigen::VectorXd of size n)
    */
   template <class ScalarFunc, class VectorFunc, class MatrixFunc>
@@ -88,7 +88,7 @@ public:
    * The algorithm will stop when the gradient is close enough to 0 ("close enough" is defined by options.threshold)
    * @param objective_func  function to minimize (takes as input an Eigen::VectorXd of size n)
    * @param gradient_func  gradient of the objective function (returns an Eigen::VectorXd of size n)
-   * @param hessian_func  hessian of the objective function (returns a square Eigen::SparseMatrix<double> of size n)
+   * @param hessian_func  hessian of the objective function (returns a square Eigen::SparseMatrix<scalar> of size n)
    * @param _var  initial guess for the algorithm (Eigen::VectorXd of size n)
    * @return the result of the algorithm (ie x = \argmin f such that \nabla f(x) = 0 and \nabla^2 f(x) is SPD)
    */

@@ -1,4 +1,5 @@
 # Optim
+[![](https://github.com/DavidJourdan/optim/workflows/Build/badge.svg)](https://github.com/DavidJourdan/optim/actions)
 
 Nonlinear optimization library built using Eigen
 

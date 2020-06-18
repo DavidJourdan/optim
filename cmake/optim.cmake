@@ -18,13 +18,16 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 set (EXTRA_LIBS ${EXTRA_LIBS} Eigen3::Eigen)
 
+find_package (Threads)
+set (EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+
 ### optim
 file(GLOB SRC ${OPTIM_INCL_DIR}/NewtonSolver.cpp ${OPTIM_INCL_DIR}/filter_var.cpp ${OPTIM_INCL_DIR}/SolverBase.cpp)
 add_library(optim ${SRC})
 
 # c++ flags
 set_target_properties(optim PROPERTIES
-        CXX_STANDARD 17
+        CXX_STANDARD 14
         CXX_STANDARD_REQUIRED OFF
         CXX_EXTENSIONS ON
         )
