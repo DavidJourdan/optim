@@ -49,9 +49,9 @@ TEST_CASE("Rosenbrock function", "[Newton]")
   {
     NewtonSolver<> solver;
 
-    REQUIRE(solver.info() == NewtonSolver<>::uninitialized);
+    REQUIRE(solver.info() == SolverStatus::uninitialized);
 
-    solver.options.display = NewtonSolver<>::quiet;
+    solver.options.display = SolverDisplay::quiet;
     solver.options.threshold = 1e-4;
     VectorXd x = VectorXd::Constant(100, 3);
     solver.solve(energy, gradient, hessian, x);
@@ -63,11 +63,11 @@ TEST_CASE("Rosenbrock function", "[Newton]")
   {
     NewtonSolver<> solver;
 
-    solver.options.display = NewtonSolver<>::quiet;
+    solver.options.display = SolverDisplay::quiet;
     VectorXd x = VectorXd::Constant(100, 3);
     solver.init(energy, gradient, hessian, x);
 
-    while(solver.gradient_norm() > 1e-4 && solver.info() == NewtonSolver<>::success)
+    while(solver.gradient_norm() > 1e-4 && solver.info() == SolverStatus::success)
     {
       solver.solve_one_step();
     }
@@ -114,9 +114,9 @@ TEST_CASE("Rosenbrock function", "[Newton]")
       }
     };
 
-    NewtonSolver<double> solver;
+    NewtonSolver<> solver;
 
-    solver.options.display = NewtonSolver<double>::quiet;
+    solver.options.display = SolverDisplay::quiet;
     solver.options.threshold = 1e-4;
     VectorXd x = VectorXd::Constant(100, 3);
 
