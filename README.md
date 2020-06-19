@@ -1,5 +1,6 @@
 # Optim
 [![](https://github.com/DavidJourdan/optim/workflows/Build/badge.svg)](https://github.com/DavidJourdan/optim/actions)
+[![codecov](https://codecov.io/gh/DavidJourdan/optim/branch/master/graph/badge.svg)](https://codecov.io/gh/DavidJourdan/optim)
 
 Nonlinear optimization library built using Eigen
 
@@ -80,7 +81,7 @@ solver.solve([&r](Eigen::Ref<const Vec<scalar>> x) { return r.energy(x); },
       [&r](Eigen::Ref<const Vec<scalar>> x) { return r.hessian(x); }, var);
 ```
 
-The implementation of this algorithm follow its description given in "Nonlinear Optimization" by Nocedal & Wright
+The implementation of this algorithm follows its description given in "Nonlinear Optimization" by Nocedal & Wright
 
 ## How to build
 
@@ -90,4 +91,6 @@ add_subdirectory("path/to/optim")
 // ...
 target_link_libraries(YOUR_TARGET optim)
 ```
-to your ```CMakeLists.txt```. You can optionally add CHOLMOD as a dependency for faster matrix solves, to do so set the ```OPTIM_USE_CHOLMOD``` to ```ON``` in your CMakeLists.txt
+to your ```CMakeLists.txt```. 
+
+You can optionally add CHOLMOD as a dependency for faster matrix solves. To do so set the ```OPTIM_USE_CHOLMOD``` option to ```ON``` in your ```CMakeLists.txt```
