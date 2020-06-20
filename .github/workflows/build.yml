@@ -34,16 +34,16 @@ jobs:
 
       - name: Dependencies (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt install libeigen3-dev
+        run: sudo apt install libeigen3-dev coreutils
       - name: Dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install eigen
+        run: brew install eigen coreutils
 
       - name: Configure
-        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DENABLE_TEST_COVERAGE=ON
 
       - name: Build
-        run: cmake --build build --config Release -j4
+        run: cmake --build build --config Release -j $(nproc)
 
       - name: Tests
         run:  |
