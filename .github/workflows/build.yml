@@ -38,7 +38,7 @@ jobs:
 
       - name: Dependencies (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt install libeigen3-dev coreutils libcholmod
+        run: sudo apt install libeigen3-dev coreutils libsuitesparse-dev
       - name: Dependencies (macOS)
         if: runner.os == 'macOS'
         run: brew install eigen coreutils suite-sparse

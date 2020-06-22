@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Dependencies
-        run: sudo apt install libeigen3-dev coreutils libcholmod
+        run: sudo apt install libeigen3-dev coreutils libsuitesparse-dev
 
       - name: Configure
         run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DENABLE_TEST_COVERAGE=ON -DBUILD_TESTS=ON -DOPTIM_USE_CHOLMOD=ON
