@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - testCI
   pull_request:
     branches:
       - master
@@ -40,15 +41,15 @@ jobs:
         run: brew install eigen coreutils
 
       - name: Configure
-        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DENABLE_TEST_COVERAGE=ON
+        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DENABLE_TEST_COVERAGE=ON -DBUILD_TESTS=ON
 
       - name: Build
-        run: cmake --build build --config Release -j $(nproc)
+        run: cmake --build build --config Debug -j $(nproc)
 
       - name: Tests
         run:  |
           cd build
-          ctest -C Release
+          ctest -C Debug
 
       - name: collect code coverage
         run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"

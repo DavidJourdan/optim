@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-################################################################################
+project(tests)
 
 option(ENABLE_TEST_COVERAGE "Enable test coverage" OFF)
 
@@ -25,8 +25,8 @@ foreach(SOURCE IN ITEMS ${TEST_SOURCES})
 
     # Code coverage
     if (ENABLE_TEST_COVERAGE)
-        target_compile_options(${TEST_NAME} INTERFACE --coverage -O0 -g)
-        target_link_libraries(${TEST_NAME} INTERFACE --coverage)
+        target_compile_options(${TEST_NAME} PUBLIC -O0 -g --coverage)
+        target_link_libraries(${TEST_NAME} PUBLIC --coverage)
     endif()
 
 endforeach()
