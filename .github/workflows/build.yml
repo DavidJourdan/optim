@@ -1,3 +1,5 @@
+# Build the library on different platforms
+
 name: Build
 
 on:
@@ -24,6 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
+        cholmod: [ON, OFF]
         include:
           - os: macos-latest
             name: macOS
@@ -34,21 +37,16 @@ jobs:
 
       - name: Dependencies (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt install libeigen3-dev coreutils
+        run: sudo apt install libeigen3-dev coreutils libsuitesparse-dev
       - name: Dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install eigen coreutils
+        run: brew install eigen coreutils suite-sparse
 
       - name: Configure
-        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DENABLE_TEST_COVERAGE=ON
+        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DOPTIM_USE_CHOLMOD=${{ matrix.cholmod }}
 
       - name: Build
         run: cmake --build build --config Release -j $(nproc)
 
-      - name: Tests
-        run:  |
-          cd build
-          ctest -C Release
-
-      - name: collect code coverage
-        run: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+      - name: Run
+        run: build/example/example
