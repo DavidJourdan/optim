@@ -13,8 +13,8 @@ endif()
 option(BUILD_TESTS    "Build optim unit test"  OFF)
 
 # Build example project
-if(TOPLEVEL_PROJECT AND NOT BUILD_TESTS)
-    option(BUILD_EXAMPLE  "Build example project"  OFF)
+if(${TOPLEVEL_PROJECT} AND NOT ${BUILD_TESTS})
+    option(BUILD_EXAMPLE  "Build example project"  ON)
 endif()
 
 option(OPTIM_USE_CHOLMOD  "Use Cholmod linear solver instead of Eigen's built-in one"  OFF)

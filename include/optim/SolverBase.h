@@ -129,7 +129,7 @@ public:
     struct LBFGSOptions
     {
       // number of corrections to approximate the inverse Hessian matrix.
-      // Values less than \c 3 are not recommended. Large values will result in excessive computing time.
+      // Values less than 3 are not recommended. Large values will result in excessive computing time.
       int m = 6;
     } bfgs;
   } options;
