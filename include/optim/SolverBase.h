@@ -95,10 +95,10 @@ public:
 
     struct LineSearchOptions
     {
-      // coefficient for the Armijo rule (to be set between 0 and 1)
-      scalar armijo_c = 1e-4;
-      // between 0 and 1, says how much the step size decreases in each step
-      scalar shrink_factor = 0.5;
+      // between 0 and 1, coefficient c_1 for the Armijo condition (Inequality 3.4 [Nocedal & Wright 2006])
+      scalar c1 = 1e-4;
+      scalar c2 = 0.9;            // between c_1 and 1, coefficient for the second Wolfe condition (3.6b)
+      scalar shrink_factor = 0.5; // between 0 and 1, says how much the step size decreases in each step
     } line_search;
 
     struct NewtonRegularizationOptions

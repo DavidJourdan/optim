@@ -47,6 +47,7 @@ Vec<scalar> NewtonSolver<scalar>::solve_one_step()
 
     if(alpha > 0)
     {
+      // compute _var + alpha * dx and gradient(_var) and _hessian(_var)
       update(alpha, dx);
 
       if(this->options.display != SolverDisplay::quiet)

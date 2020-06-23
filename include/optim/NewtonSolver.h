@@ -58,7 +58,7 @@ public:
     _force_val = -gradient(var);
     _hessian_val = hessian(var);
 
-    if(std::isnan(std::isnan(_hessian_val.sum())))
+    if(std::isnan(_hessian_val.sum()))
       this->set_status(SolverStatus::NaN_error);
 
     this->init_base(energy(var));

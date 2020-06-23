@@ -94,7 +94,7 @@ template <typename scalar>
 scalar SolverBase<scalar>::line_search(Eigen::Ref<const Vec<scalar>> direction)
 {
   scalar step_size = 1.0;
-  scalar k = options.line_search.armijo_c * gradient_value().dot(direction);
+  scalar k = options.line_search.c1 * gradient_value().dot(direction);
   scalar current_energy_value = energy(var() + step_size * direction);
 
   while(current_energy_value > _energyVal + step_size * k)
