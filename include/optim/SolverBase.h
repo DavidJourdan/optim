@@ -15,6 +15,10 @@ namespace optim
 template <typename scalar>
 using Vec = Eigen::Matrix<scalar, -1, 1>;
 
+/**
+ * @brief
+ *
+ */
 enum class SolverStatus {
   success,
   line_search_failed,
@@ -46,25 +50,10 @@ public:
   /**
    * @brief
    * this function needs to be called AFTER setting the various function callbacks (energy and its derivatives if any)
-   * and BEFORE EVERYTHING ELSE, so that gradient_norm() returns a meaningful value
+   * so that gradient_norm() returns a meaningful value
    * @param energyVal
    */
-  void init_base(scalar energyVal)
-  {
-    _energyVal = energyVal;
-    if(options.display != SolverDisplay::quiet)
-      display_header();
-
-    std::sort(options.fixed_dofs.begin(), options.fixed_dofs.end());
-
-    if(std::isnan(_energyVal))
-      _status = SolverStatus::NaN_error;
-    else
-      _status = SolverStatus::success;
-
-    if(options.threshold < 0)
-      options.threshold = 1e-4 * gradient_norm();
-  }
+  void init_base(scalar energyVal);
 
   /**
    * @brief  do one step of the algorithm
@@ -136,13 +125,6 @@ public:
 
 protected:
   /**
-   * Backtracking line search algorithm (see Numerical Optimization by Nocedal & Wright)
-   * @param direction the direction of descent
-   * @return the step size alpha if it succeeds, or -1 if the line search failed
-   */
-  scalar line_search(Eigen::Ref<const Vec<scalar>> direction);
-
-  /**
    * These functions display relevant per-iteration information, in a similar fashion to Matlab solvers
    * Iter: iteration count
    * Fval: current energy value
@@ -153,9 +135,15 @@ protected:
   void display_line(scalar step_size); // warning: this function increases the iteration count by 1
   void display_status() const;
 
-  scalar _energyVal;
+  /**
+   * Backtracking line search algorithm (see Numerical Optimization by Nocedal & Wright)
+   * @param direction the direction of descent
+   * @return the step size alpha if it succeeds, or -1 if the line search failed
+   */
+  scalar line_search(Eigen::Ref<const Vec<scalar>> direction);
 
 private:
+  scalar _energyVal;
   SolverStatus _status;
 };
 

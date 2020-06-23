@@ -12,6 +12,39 @@
 using namespace optim;
 
 template <typename scalar>
+
+void SolverBase<scalar>::main_loop()
+{
+  while(gradient_norm() > options.threshold && info() == SolverStatus::success)
+  {
+    solve_one_step();
+    if(iteration_count() > options.iteration_limit)
+      _status = SolverStatus::iteration_overflow;
+  }
+
+  if(info() != SolverStatus::success)
+    display_status();
+}
+
+template <typename scalar>
+void SolverBase<scalar>::init_base(scalar energyVal)
+{
+  _energyVal = energyVal;
+  if(options.display != SolverDisplay::quiet)
+    display_header();
+
+  std::sort(options.fixed_dofs.begin(), options.fixed_dofs.end());
+
+  if(std::isnan(_energyVal) || std::isnan(gradient_norm()))
+    _status = SolverStatus::NaN_error;
+  else
+    _status = SolverStatus::success;
+
+  if(options.threshold < 0)
+    options.threshold = 1e-4 * gradient_norm();
+}
+
+template <typename scalar>
 void SolverBase<scalar>::display_header() const
 {
   int spacing = 10 + options.display_precision;
@@ -77,20 +110,6 @@ scalar SolverBase<scalar>::line_search(Eigen::Ref<const Vec<scalar>> direction)
     set_status(SolverStatus::NaN_error);
 
   return step_size;
-}
-
-template <typename scalar>
-void SolverBase<scalar>::main_loop()
-{
-  while(gradient_norm() > options.threshold && info() == SolverStatus::success)
-  {
-    solve_one_step();
-    if(iteration_count() > options.iteration_limit)
-      _status = SolverStatus::iteration_overflow;
-  }
-
-  if(info() != SolverStatus::success)
-    display_status();
 }
 
 namespace optim

@@ -49,6 +49,8 @@ public:
             const MatrixFunc &hessian_func,
             Eigen::Ref<const Vec<scalar>> var)
   {
+    _iter = 1;
+
     _energy_fct = objective_func;
     _gradient_fct = gradient_func;
     _hessian_fct = hessian_func;
@@ -56,12 +58,12 @@ public:
     _force_val = -gradient(var);
     _hessian_val = hessian(var);
 
-    if(std::isnan(_force_val.sum()) || std::isnan(_hessian_val.sum()))
+    if(std::isnan(std::isnan(_hessian_val.sum())))
       this->set_status(SolverStatus::NaN_error);
 
     this->init_base(energy(var));
+    this->options.update_fct(var);
 
-    _iter = 1;
     _regularization_coeff = 0.01;
 
     _solver.analyzePattern(_hessian_val);

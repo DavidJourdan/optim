@@ -10,10 +10,6 @@ on:
     branches:
       - master
 
-env:
-  CTEST_OUTPUT_ON_FAILURE: ON
-  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
 jobs:
   ####################
   # Linux / macOS

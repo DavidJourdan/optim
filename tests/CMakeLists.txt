@@ -10,7 +10,7 @@ foreach(SOURCE IN ITEMS ${TEST_SOURCES})
     get_filename_component(TEST_NAME ${SOURCE} NAME_WE)
 
     # c++ flags
-    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD 14)
 
     add_definitions (-DCATCH_CONFIG_ENABLE_BENCHMARKING)
 
