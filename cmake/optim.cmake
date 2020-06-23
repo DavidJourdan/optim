@@ -22,7 +22,8 @@ find_package (Threads)
 set (EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
 ### optim
-file(GLOB SRC ${OPTIM_INCL_DIR}/NewtonSolver.cpp ${OPTIM_INCL_DIR}/filter_var.cpp ${OPTIM_INCL_DIR}/SolverBase.cpp)
+file(GLOB SRC ${OPTIM_INCL_DIR}/NewtonSolver.cpp ${OPTIM_INCL_DIR}/filter_var.cpp ${OPTIM_INCL_DIR}/SolverBase.cpp
+  ${OPTIM_INCL_DIR}/LBFGS.cpp)
 add_library(optim ${SRC})
 
 # c++ flags

@@ -56,7 +56,7 @@ TEST_CASE("Rosenbrock function", "[Newton]")
     VectorXd x = VectorXd::Constant(100, 3);
     solver.solve(energy, gradient, hessian, x);
 
-    REQUIRE_THAT(solver.var(), ApproxEquals(VectorXd::Ones(100)));
+    REQUIRE_THAT(solver.var(), ApproxEquals<double>(VectorXd::Ones(100)));
   }
 
   SECTION("Solve 1 step")
@@ -72,7 +72,7 @@ TEST_CASE("Rosenbrock function", "[Newton]")
       solver.solve_one_step();
     }
 
-    REQUIRE_THAT(solver.var(), ApproxEquals(VectorXd::Ones(100)));
+    REQUIRE_THAT(solver.var(), ApproxEquals<double>(VectorXd::Ones(100)));
   }
 
   SECTION("Object-oriented")
@@ -123,6 +123,6 @@ TEST_CASE("Rosenbrock function", "[Newton]")
     Rosenbrock r(100);
     solver.solve(r, x);
 
-    REQUIRE_THAT(solver.var(), ApproxEquals(VectorXd::Ones(100)));
+    REQUIRE_THAT(solver.var(), ApproxEquals<double>(VectorXd::Ones(100)));
   }
 }

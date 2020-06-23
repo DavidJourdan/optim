@@ -83,6 +83,40 @@ solver.solve([&r](Eigen::Ref<const Vec<scalar>> x) { return r.energy(x); },
 
 The implementation of this algorithm follows its description given in "Nonlinear Optimization" by Nocedal & Wright
 
+## LBFGS Solver
+L-BFGS stands for the Limited-memory Broyden-Fletcher-Goldfarb-Shanno method. LBFGS is meant to work with large-size problems with dense hessian matrices. It is a quasi-Newton method, meaning it can approximate the hessian (matrix of second derivatives). To use it, you only need to define your objective function and its gradient:
+
+```cpp
+using namespace Eigen;
+using namespace optim;
+
+const auto energy = [](const auto &x) {
+  int n = x.size();
+  double res = 0;
+  for(int i = 0; i < n; i += 2)
+  {
+    res += pow(1 - x(i), 2) + 100 * pow(x(i + 1) - x(i) * x(i), 2);
+  }
+  return res;
+};
+const auto gradient = [](const auto &x) {
+  int n = x.size();
+  VectorXd grad = VectorXd::Zero(n);
+  for(int i = 0; i < n; i += 2)
+  {
+    grad(i + 1) = 200 * (x(i + 1) - x(i) * x(i));
+    grad(i) = -2 * (x(i) * grad(i + 1) + 1 - x(i));
+  }
+  return grad;
+};
+
+LBFGSSolver<double> solver;
+
+VectorXd x = VectorXd::Constant(10, 3);
+
+solver.solve(energy, gradient, x);
+```
+
 ## How to build
 
 If your project uses CMake, simply add 
@@ -93,4 +127,4 @@ target_link_libraries(YOUR_TARGET optim)
 ```
 to your ```CMakeLists.txt```. 
 
-You can optionally add CHOLMOD as a dependency for faster matrix solves. To do so set the ```OPTIM_USE_CHOLMOD``` option to ```ON``` in your ```CMakeLists.txt```
+You can optionally add CHOLMOD as a dependency for faster matrix solves (in the Newton algorithm). To do so set the ```OPTIM_USE_CHOLMOD``` option to ```ON``` in your ```CMakeLists.txt```

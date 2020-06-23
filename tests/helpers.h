@@ -87,11 +87,12 @@ matrix_random(int nRows, int nCols, double min = -1, double max = 1)
           new RandomMatrixGenerator(nRows, nCols, min, max)));
 }
 
-struct EigenApproxMatcher : Catch::MatcherBase<Eigen::MatrixXd>
+template <typename scalar>
+struct EigenApproxMatcher : Catch::MatcherBase<Eigen::Matrix<scalar, -1, -1>>
 {
-  EigenApproxMatcher(Eigen::MatrixXd const &comparator) : _comparator(comparator) {}
+  EigenApproxMatcher(Eigen::Matrix<scalar, -1, -1> const &comparator) : _comparator(comparator) {}
 
-  bool match(Eigen::MatrixXd const &mat) const override
+  bool match(Eigen::Matrix<scalar, -1, -1> const &mat) const override
   {
     if(_comparator.rows() != mat.rows())
       return false;
@@ -132,12 +133,13 @@ struct EigenApproxMatcher : Catch::MatcherBase<Eigen::MatrixXd>
     return *this;
   }
 
-  Eigen::MatrixXd const &_comparator;
+  Eigen::Matrix<scalar, -1, -1> const &_comparator;
   mutable Catch::Detail::Approx approx = Catch::Detail::Approx::custom();
 };
 
 // The builder function
-inline EigenApproxMatcher ApproxEquals(const Eigen::MatrixXd &M)
+template <typename scalar>
+inline EigenApproxMatcher<scalar> ApproxEquals(const Eigen::Matrix<scalar, -1, -1> &M)
 {
-  return EigenApproxMatcher(M);
+  return EigenApproxMatcher<scalar>(M);
 }

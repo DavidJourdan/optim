@@ -3,7 +3,7 @@ project(tests)
 
 option(ENABLE_TEST_COVERAGE "Enable test coverage" OFF)
 
-set(TEST_SOURCES  test_newton.cpp)
+set(TEST_SOURCES  test_newton.cpp test_bfgs.cpp)
 
 foreach(SOURCE IN ITEMS ${TEST_SOURCES})
     # Extract the filename without extension (NAME_WE) as a name for our executable
