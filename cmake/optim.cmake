@@ -41,4 +41,4 @@ if (OPTIM_USE_CHOLMOD)
 endif (OPTIM_USE_CHOLMOD)
 
 target_link_libraries(optim ${EXTRA_LIBS})
-include_directories(${OPTIM_SOURCE_DIR})
+target_include_directories(optim PUBLIC ${OPTIM_SOURCE_DIR})

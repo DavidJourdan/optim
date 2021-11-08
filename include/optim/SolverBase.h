@@ -123,6 +123,9 @@ public:
     } bfgs;
   } options;
 
+  // Display a message corresponding to the _status value
+  void display_status() const;
+
 protected:
   /**
    * These functions display relevant per-iteration information, in a similar fashion to Matlab solvers
@@ -133,7 +136,6 @@ protected:
    */
   void display_header() const;
   void display_line(scalar step_size); // warning: this function increases the iteration count by 1
-  void display_status() const;
 
   /**
    * Backtracking line search algorithm (see Numerical Optimization by Nocedal & Wright)
