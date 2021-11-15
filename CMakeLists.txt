@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.1)
 project(optim)
 
 # Detects whether this is a top-level project
@@ -16,8 +16,6 @@ option(BUILD_TESTS    "Build optim unit test"  OFF)
 if(${TOPLEVEL_PROJECT} AND NOT ${BUILD_TESTS})
     option(BUILD_EXAMPLE  "Build example project"  ON)
 endif()
-
-option(OPTIM_USE_CHOLMOD  "Use Cholmod linear solver instead of Eigen's built-in one"  OFF)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 

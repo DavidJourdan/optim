@@ -33,12 +33,12 @@ set_target_properties(optim PROPERTIES
         CXX_EXTENSIONS ON
         )
 
-if (OPTIM_USE_CHOLMOD)
-  find_package (Cholmod REQUIRED QUIET)
+find_package (CHOLMOD REQUIRED QUIET)
+if(CHOLMOD_FOUND)
   include_directories (${CHOLMOD_INCLUDES})
   add_definitions (-DNEWTON_USE_CHOLMOD)
   set (EXTRA_LIBS ${EXTRA_LIBS} ${CHOLMOD_LIBRARIES})
-endif (OPTIM_USE_CHOLMOD)
+endif (CHOLMOD_FOUND)
 
 target_link_libraries(optim ${EXTRA_LIBS})
 target_include_directories(optim PUBLIC ${OPTIM_SOURCE_DIR})
