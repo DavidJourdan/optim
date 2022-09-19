@@ -16,10 +16,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 ### Eigen
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-set (EXTRA_LIBS ${EXTRA_LIBS} Eigen3::Eigen)
+set(EXTRA_LIBS ${EXTRA_LIBS} Eigen3::Eigen)
 
 find_package (Threads)
-set (EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+set(EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
 ### optim
 file(GLOB SRC ${OPTIM_INCL_DIR}/NewtonSolver.cpp ${OPTIM_INCL_DIR}/filter_var.cpp ${OPTIM_INCL_DIR}/SolverBase.cpp
@@ -33,12 +33,16 @@ set_target_properties(optim PROPERTIES
         CXX_EXTENSIONS ON
         )
 
-find_package (CHOLMOD REQUIRED QUIET)
-if(CHOLMOD_FOUND)
-  include_directories (${CHOLMOD_INCLUDES})
-  add_definitions (-DNEWTON_USE_CHOLMOD)
-  set (EXTRA_LIBS ${EXTRA_LIBS} ${CHOLMOD_LIBRARIES})
-endif (CHOLMOD_FOUND)
+option(WITH_CHOLMOD "Compile optim with CHOLMOD" ON)
+
+if(WITH_CHOLMOD)
+  find_package (CHOLMOD REQUIRED QUIET)
+  if(CHOLMOD_FOUND)
+    target_include_directories(optim PUBLIC ${CHOLMOD_INCLUDES})
+    target_compile_definitions(optim PUBLIC OPTIM_USE_CHOLMOD)
+    set(EXTRA_LIBS ${EXTRA_LIBS} ${CHOLMOD_LIBRARIES})
+  endif(CHOLMOD_FOUND)
+endif(WITH_CHOLMOD)
 
 target_link_libraries(optim ${EXTRA_LIBS})
 target_include_directories(optim PUBLIC ${OPTIM_SOURCE_DIR})

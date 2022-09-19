@@ -39,7 +39,7 @@ jobs:
         run: brew install eigen coreutils suite-sparse
 
       - name: Configure
-        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DOPTIM_USE_CHOLMOD=${{ matrix.cholmod }}
+        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Release -DWITH_CHOLMOD=${{ matrix.cholmod }}
 
       - name: Build
         run: cmake --build build --config Release -j $(nproc)

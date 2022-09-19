@@ -29,7 +29,7 @@ jobs:
         run: sudo apt install libeigen3-dev coreutils libsuitesparse-dev
 
       - name: Configure
-        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DENABLE_TEST_COVERAGE=ON -DBUILD_TESTS=ON -DOPTIM_USE_CHOLMOD=ON
+        run:  cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -DENABLE_TEST_COVERAGE=ON -DBUILD_TESTS=ON -DWITH_CHOLMOD=ON
 
       - name: Build
         run: cmake --build build --config Debug -j $(nproc)

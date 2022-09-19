@@ -19,9 +19,9 @@ namespace optim
 
 template <typename scalar>
 #ifdef OPTIM_USE_CHOLMOD
-using LinearSolver = Eigen::CholmodDecomposition<Eigen::SparseMatrix<scalar>, Eigen::Upper>;
+using LinearSolver = Eigen::CholmodSimplicialLDLT<Eigen::SparseMatrix<scalar>, Eigen::Upper>;
 #else
-using LinearSolver = Eigen::SimplicialLLT<Eigen::SparseMatrix<scalar>, Eigen::Upper>;
+using LinearSolver = Eigen::SimplicialLDLT<Eigen::SparseMatrix<scalar>, Eigen::Upper>;
 #endif
 
 template <typename scalar = double>
