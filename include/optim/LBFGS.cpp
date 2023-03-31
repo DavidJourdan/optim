@@ -24,7 +24,7 @@ Vec<scalar> LBFGSSolver<scalar>::solve_one_step()
 
   Vec<scalar> dir = -_grad;
 
-  // variable names follow Alogrithm 7.4 [Nocedal & Wright 2006]
+  // variable names follow Algorithm 7.4 [Nocedal & Wright 2006]
   const int k = _iter - 1;
   const int m = std::min<int>(this->options.bfgs.m, k);
 
